@@ -15,10 +15,7 @@ libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-concurrent" % "7.1.7",
 
   "org.json4s" %% "json4s-scalaz" % "3.3.0",
-  "org.json4s" %% "json4s-jackson" % "3.3.0",
-
-  "com.chuusai" %% "shapeless" % "2.3.0",
-  "com.github.julien-truffaut" %% "monocle-core" % "1.2.0-M1"
+  "org.json4s" %% "json4s-jackson" % "3.3.0"
 )
 
 // https://github.com/non/kind-projector
