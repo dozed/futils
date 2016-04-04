@@ -7,7 +7,7 @@ import org.http4s.dsl._
 import org.http4s.headers.`Content-Type`
 
 import org.json4s.JValue
-import org.json4s.scalaz.JsonScalaz._
+import org.json4s.ext.scalaz.JsonScalaz._
 import org.json4s.jackson._
 
 import _root_.scalaz.concurrent.Task
