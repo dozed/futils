@@ -10,6 +10,7 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-dsl" % "0.13.0a",
 
   "org.ccil.cowan.tagsoup" % "tagsoup" % "1.2.1",
+  "org.scalatra.rl" %% "rl" % "0.4.10",
 
   "org.scalaz" %% "scalaz-core" % "7.2.2",
   "org.scalaz" %% "scalaz-concurrent" % "7.2.2"
