@@ -16,4 +16,9 @@ object FIO {
     pw.close
   }
 
+  def ensureDirectory(f: String): Unit = {
+    val file = new java.io.File(f)
+    if (!file.exists()) file.mkdir()
+  }
+
 }
