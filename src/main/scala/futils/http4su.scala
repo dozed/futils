@@ -69,7 +69,7 @@ object http4su {
   implicit def jsonrAsEntityDecoder[A:JSONR]: EntityDecoder[A] = {
 
     jsonDecoder.flatMapR(json => implicitly[JSONR[A]].read(json).disjunction.fold(
-      _ => org.http4s.DecodeResult.failure[A](ParseFailure("bad request", "bad request")),
+      _ => org.http4s.DecodeResult.failure[A](MalformedMessageBodyFailure("bad request")),
       a => org.http4s.DecodeResult.success[A](a)
     ))
 
@@ -78,7 +78,7 @@ object http4su {
   implicit val jsonDecoder: EntityDecoder[JValue] = {
     EntityDecoder.text(Charset.`UTF-8`)
       .flatMapR { s: String => parseJsonOpt(s).fold(
-        org.http4s.DecodeResult.failure[JValue](ParseFailure("bad request", "bad request"))
+        org.http4s.DecodeResult.failure[JValue](MalformedMessageBodyFailure("bad request"))
       )(
         a => org.http4s.DecodeResult.success[JValue](a)
       )}
