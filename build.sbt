@@ -9,14 +9,12 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-blaze-client" % "0.12.1",
   "org.http4s" %% "http4s-dsl" % "0.12.1",
 
-  "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
+  "org.ccil.cowan.tagsoup" % "tagsoup" % "1.2.1",
 
   "org.scalaz" %% "scalaz-core" % "7.1.7",
   "org.scalaz" %% "scalaz-concurrent" % "7.1.7"
 )
 
-// https://github.com/non/kind-projector
-// makes writing type signatures easier
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
 
 lazy val json4sDrafts = ProjectRef(uri("ssh://git@github.com/dozed/json4s-drafts.git"), "json4s-drafts")
