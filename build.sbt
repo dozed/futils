@@ -18,6 +18,8 @@ libraryDependencies ++= Seq(
 
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
 
+exportJars := true
+
 lazy val json4sDrafts = ProjectRef(uri("ssh://git@github.com/dozed/json4s-drafts.git"), "json4s-drafts")
 
 lazy val futils = project.in(file("."))
