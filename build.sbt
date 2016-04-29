@@ -5,9 +5,9 @@ version := "1.0"
 scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
-  "org.http4s" %% "http4s-blaze-server" % "0.13.0a",
-  "org.http4s" %% "http4s-blaze-client" % "0.13.0a",
-  "org.http4s" %% "http4s-dsl" % "0.13.0a",
+  "org.http4s" %% "http4s-blaze-server" % "0.13.2a",
+  "org.http4s" %% "http4s-blaze-client" % "0.13.2a",
+  "org.http4s" %% "http4s-dsl" % "0.13.2a",
 
   "org.ccil.cowan.tagsoup" % "tagsoup" % "1.2.1",
   "org.scalatra.rl" %% "rl" % "0.4.10",
