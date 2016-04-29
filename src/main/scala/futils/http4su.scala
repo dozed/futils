@@ -19,6 +19,38 @@ import _root_.scalaz._, Scalaz._
 object http4su {
 
 
+  implicit class DecodeResultExt[T](r: DecodeResult[T]) {
+
+    def require: T = r.run.unsafePerformSync.getOrElse(sys.error("DecodeResult.require"))
+
+  }
+
+  implicit class ResponseExt(res: Response) {
+
+    def cookies: List[Cookie] = res.headers.toList.collect {
+      case headers.`Set-Cookie`(h) => h.cookie
+    }
+
+    def cookie(name: String): Option[Cookie] = cookies.find(_.name === name)
+
+    def cookieAs[A](name: String)(implicit ev: Cookie => Option[A]) = {
+      cookie(name).flatMap(ev)
+    }
+
+    def location: Option[Uri] = res.headers.toList.collectFirst {
+      case headers.`Location`(h) => h.uri
+    }
+
+  }
+
+  implicit class RequestExt(req: Request) {
+
+    def withCookie(cookie: Cookie) = {
+      req.copy(headers = req.headers.put(headers.Cookie(cookie)))
+    }
+
+  }
+
 
   // QueryParamDecoder is for single query parameters
   //  def listDecoder[A:QueryParamDecoder](implicit decodeA: QueryParamDecoder[A]): QueryParamDecoder[List[A]] = new QueryParamDecoder[List[A]] {
@@ -46,16 +78,9 @@ object http4su {
 
   def queryParamDecoderFromJsonr[A:JSONR]: QueryParamDecoder[A] = new QueryParamDecoder[A]{
     override def decode(value: QueryParameterValue): ValidationNel[ParseFailure, A] = {
-      value.value.fromJson[A].leftMap(_ => ParseFailure("bad request", s"could not decode value. $value").wrapNel)
+      value.value.validate[A].leftMap(_ => ParseFailure("bad request", s"could not decode value. $value").wrapNel)
     }
   }
-
-  implicit class StringExt(s: String) {
-    def fromJson[A:JSONR]: Result[A] = {
-      implicitly[JSONR[A]].read(parseJson(s))
-    }
-  }
-
 
   implicit def jsonwAsEntityEncoder[A:JSONW]: EntityEncoder[A] = {
 
@@ -82,17 +107,6 @@ object http4su {
       )(
         a => org.http4s.DecodeResult.success[JValue](a)
       )}
-  }
-
-  implicit class RequestExt(r: Request) {
-    def decodeAt[A:JSONR](key: String)(f: A => Task[Response]): Task[Response] = {
-      r.decode[JValue] { json =>
-        implicitly[JSONR[A]].read(json \ key).fold(
-          errors => BadRequest(),
-          a => f(a)
-        )
-      }
-    }
   }
 
 
