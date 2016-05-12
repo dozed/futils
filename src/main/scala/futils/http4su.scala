@@ -10,11 +10,15 @@ import org.json4s.JValue
 import org.json4s.ext.scalaz.JsonScalaz._
 import org.json4s.jackson._
 
-import _root_.scalaz.concurrent.Task
-import _root_.scalaz.stream.Process
-import _root_.scalaz.stream.io._
+import io.circe.Encoder
+import io.circe.Decoder
+import io.circe.Json
 
-import _root_.scalaz._, Scalaz._
+import scalaz.concurrent.Task
+import scalaz.stream.Process
+import scalaz.stream.io._
+
+import scalaz._, Scalaz._
 
 object http4su {
 
@@ -73,6 +77,28 @@ object http4su {
           QueryParamDecoder[A].decode(QueryParameterValue(s)).toOption
         ).headOption | default
       )
+  }
+
+  implicit def circeEncoderAsEntityEncoder[A:Encoder]: EntityEncoder[A] = {
+    EntityEncoder
+      .stringEncoder(Charset.`UTF-8`)
+      .contramap { r: A => Encoder[A].apply(r).noSpaces }
+      .withContentType(`Content-Type`(MediaType.`application/json`, Charset.`UTF-8`))
+  }
+
+  implicit def circeDecoderAsEntityDecoder[A:Decoder]: EntityDecoder[A] = {
+    EntityDecoder[Json].flatMapR(json => Decoder[A].decodeJson(json).fold(
+      _ => org.http4s.DecodeResult.failure[A](MalformedMessageBodyFailure("bad request")),
+      a => org.http4s.DecodeResult.success[A](a)
+    ))
+  }
+
+  implicit val circeJsonEntityDecoder: EntityDecoder[Json] = {
+    EntityDecoder.text(Charset.`UTF-8`)
+      .flatMapR { s: String => io.circe.parser.parse(s).fold(
+        _ => org.http4s.DecodeResult.failure[Json](MalformedMessageBodyFailure("bad request")),
+        a => org.http4s.DecodeResult.success[Json](a)
+      )}
   }
 
 

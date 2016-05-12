@@ -9,6 +9,9 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-blaze-client" % "0.13.2a",
   "org.http4s" %% "http4s-dsl" % "0.13.2a",
 
+  "io.circe" %% "circe-core" % "0.4.1",
+  "io.circe" %% "circe-parser" % "0.4.1",
+
   "org.ccil.cowan.tagsoup" % "tagsoup" % "1.2.1",
   "org.scalatra.rl" %% "rl" % "0.4.10",
 
