@@ -12,6 +12,8 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-core" % "0.4.1",
   "io.circe" %% "circe-parser" % "0.4.1",
 
+  "com.lihaoyi" %% "ammonite-ops" % "0.5.8",
+
   "org.ccil.cowan.tagsoup" % "tagsoup" % "1.2.1",
   "org.scalatra.rl" %% "rl" % "0.4.10",
 
