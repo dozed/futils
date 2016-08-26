@@ -9,7 +9,7 @@ object threadLocals {
 
 
   trait ThreadLocalValue[A] {
-    def get: A
+    def apply(): A
   }
 
   object ThreadLocalValue {
@@ -19,7 +19,7 @@ object threadLocals {
 
       new ThreadLocalValue[A] {
 
-        def get: A = {
+        def apply(): A = {
           val a = store.get()
           if (a == null) {
             val a = init()
