@@ -88,7 +88,7 @@ object http4su {
 
   implicit def circeDecoderAsEntityDecoder[A:Decoder]: EntityDecoder[A] = {
     EntityDecoder[Json].flatMapR(json => Decoder[A].decodeJson(json).fold(
-      _ => org.http4s.DecodeResult.failure[A](MalformedMessageBodyFailure("bad request")),
+      err => org.http4s.DecodeResult.failure[A](MalformedMessageBodyFailure(err.getMessage())),
       a => org.http4s.DecodeResult.success[A](a)
     ))
   }
@@ -96,7 +96,7 @@ object http4su {
   implicit val circeJsonEntityDecoder: EntityDecoder[Json] = {
     EntityDecoder.text(Charset.`UTF-8`)
       .flatMapR { s: String => io.circe.parser.parse(s).fold(
-        _ => org.http4s.DecodeResult.failure[Json](MalformedMessageBodyFailure("bad request")),
+        err => org.http4s.DecodeResult.failure[Json](MalformedMessageBodyFailure(err.getMessage())),
         a => org.http4s.DecodeResult.success[Json](a)
       )}
   }
