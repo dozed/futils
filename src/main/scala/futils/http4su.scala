@@ -3,6 +3,7 @@ package futils
 import java.io.File
 
 import org.http4s._
+import org.http4s.circe._
 import org.http4s.dsl._
 import org.http4s.headers.`Content-Type`
 
@@ -23,12 +24,6 @@ import scalaz._, Scalaz._
 object http4su {
 
 
-  implicit class DecodeResultExt[T](r: DecodeResult[T]) {
-
-    def require: T = r.run.unsafePerformSync.getOrElse(sys.error("DecodeResult.require"))
-
-  }
-
   implicit class ResponseExt(res: Response) {
 
     def cookies: List[Cookie] = res.headers.toList.collect {
@@ -43,14 +38,6 @@ object http4su {
 
     def location: Option[Uri] = res.headers.toList.collectFirst {
       case headers.`Location`(h) => h.uri
-    }
-
-  }
-
-  implicit class RequestExt(req: Request) {
-
-    def withCookie(cookie: Cookie) = {
-      req.copy(headers = req.headers.put(headers.Cookie(cookie)))
     }
 
   }
@@ -91,14 +78,6 @@ object http4su {
       err => org.http4s.DecodeResult.failure[A](MalformedMessageBodyFailure(err.getMessage())),
       a => org.http4s.DecodeResult.success[A](a)
     ))
-  }
-
-  implicit val circeJsonEntityDecoder: EntityDecoder[Json] = {
-    EntityDecoder.text(Charset.`UTF-8`)
-      .flatMapR { s: String => io.circe.parser.parse(s).fold(
-        err => org.http4s.DecodeResult.failure[Json](MalformedMessageBodyFailure(err.getMessage())),
-        a => org.http4s.DecodeResult.success[Json](a)
-      )}
   }
 
 
