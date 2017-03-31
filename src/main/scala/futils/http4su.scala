@@ -74,7 +74,7 @@ object http4su {
   }
 
   implicit def circeDecoderAsEntityDecoder[A:Decoder]: EntityDecoder[A] = {
-    EntityDecoder[Json].flatMapR(json => Decoder[A].decodeJson(json).fold(
+    jsonDecoder.flatMapR(json => Decoder[A].decodeJson(json).fold(
       err => org.http4s.DecodeResult.failure[A](MalformedMessageBodyFailure(err.getMessage())),
       a => org.http4s.DecodeResult.success[A](a)
     ))
@@ -98,14 +98,14 @@ object http4su {
 
   implicit def jsonrAsEntityDecoder[A:JSONR]: EntityDecoder[A] = {
 
-    jsonDecoder.flatMapR(json => implicitly[JSONR[A]].read(json).disjunction.fold(
+    json4sEntityDecoder.flatMapR(json => implicitly[JSONR[A]].read(json).disjunction.fold(
       _ => org.http4s.DecodeResult.failure[A](MalformedMessageBodyFailure("bad request")),
       a => org.http4s.DecodeResult.success[A](a)
     ))
 
   }
 
-  implicit val jsonDecoder: EntityDecoder[JValue] = {
+  implicit lazy val json4sEntityDecoder: EntityDecoder[JValue] = {
     EntityDecoder.text(Charset.`UTF-8`)
       .flatMapR { s: String => parseJsonOpt(s).fold(
         org.http4s.DecodeResult.failure[JValue](MalformedMessageBodyFailure("bad request"))
