@@ -24,9 +24,9 @@ import scalaz._, Scalaz._
 object http4su {
 
 
-  implicit class ResponseExt(res: Response) {
+  implicit class MessageExt(msg: Message) {
 
-    def cookies: List[Cookie] = res.headers.toList.collect {
+    def cookies: List[Cookie] = msg.headers.toList.collect {
       case headers.`Set-Cookie`(h) => h.cookie
     }
 
@@ -36,7 +36,7 @@ object http4su {
       cookie(name).flatMap(ev)
     }
 
-    def location: Option[Uri] = res.headers.toList.collectFirst {
+    def location: Option[Uri] = msg.headers.toList.collectFirst {
       case headers.`Location`(h) => h.uri
     }
 
