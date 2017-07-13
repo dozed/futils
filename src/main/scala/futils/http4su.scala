@@ -14,6 +14,7 @@ import org.json4s.jackson._
 import io.circe.Encoder
 import io.circe.Decoder
 import io.circe.Json
+import io.circe.jawn.CirceSupportParser.facade
 
 import scalaz.concurrent.Task
 import scalaz.stream.Process
@@ -74,7 +75,7 @@ object http4su {
   }
 
   implicit def circeDecoderAsEntityDecoder[A:Decoder]: EntityDecoder[A] = {
-    jsonDecoder.flatMapR(json => Decoder[A].decodeJson(json).fold(
+    jawn.jawnDecoder(facade).flatMapR(json => Decoder[A].decodeJson(json).fold(
       err => org.http4s.DecodeResult.failure[A](MalformedMessageBodyFailure(err.getMessage())),
       a => org.http4s.DecodeResult.success[A](a)
     ))
