@@ -28,14 +28,16 @@ object http4su {
   implicit class MessageExt(msg: Message) {
 
     def cookies: List[Cookie] = msg.headers.toList.collect {
-      case headers.`Set-Cookie`(h) => h.cookie
-    }
+      case headers.Cookie(h) => h.values.toList
+    }.flatten
 
     def cookie(name: String): Option[Cookie] = cookies.find(_.name === name)
 
-    def cookieAs[A](name: String)(implicit ev: Cookie => Option[A]) = {
-      cookie(name).flatMap(ev)
+    def setCookies: List[Cookie] = msg.headers.toList.collect {
+      case headers.`Set-Cookie`(h) => h.cookie
     }
+
+    def setCookie(name: String): Option[Cookie] = setCookies.find(_.name === name)
 
     def location: Option[Uri] = msg.headers.toList.collectFirst {
       case headers.`Location`(h) => h.uri
